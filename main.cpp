@@ -12,9 +12,9 @@ public:
   server(asio::io_service& io_service, short port)
     : socket_(io_service, udp::endpoint(udp::v4(), port))
   {
+      printf("Master Server is strarting...\n");
       refreshList();
-
-                do_receive();
+    do_receive();
   }
 
   void do_receive()
@@ -43,7 +43,7 @@ public:
   void do_send()
   {
     socket_.async_send_to(
-        asio::buffer(buffer_, max_length), sender_endpoint_,
+        asio::buffer(buffer_, strlen(buffer_)), sender_endpoint_,
         [this](std::error_code /*ec*/, std::size_t /*bytes_sent*/)
         {
           printf("Response: %s\n",buffer_);
@@ -54,13 +54,12 @@ public:
   void refreshList(){
     std::ifstream servers ("servercache.txt",std::ifstream::binary);
               if(servers){
-                servers.seekg (0, servers.end);
-                int length = servers.tellg();
-                servers.seekg (0, servers.beg);
-                buffer_ = new char [length];
-                servers.read (buffer_,length);
-                servers.close();
-                std::time(&timer);
+                   // while(!servers.eof()){
+                        servers.read(buffer_,42);
+                        //printf(buffer_);
+                   // }
+                    servers.close();
+                    std::time(&timer);
                 }else{
                 printf("file not open");
               }
